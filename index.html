@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia - Sistema de Gestión Educativa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1976d2;
+            --primary-dark: #1565c0;
+            --secondary: #f4f7fb;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --info: #2196f3;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab:hover {
+            background-color: rgba(25, 118, 210, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #3d8b40;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e68900;
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #0b7dda;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+
+        .list-container {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .list-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .list-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .list-item.selected {
+            background-color: #e3f2fd;
+            border-left: 3px solid var(--primary);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .photo-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .photo-preview {
+            width: 160px;
+            height: 160px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+
+        .photo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .photo-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .badge-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--success);
+            color: white;
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1100;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background-color: var(--danger);
+        }
+
+        .toast.warning {
+            background-color: var(--warning);
+        }
+
+        .toast.info {
+            background-color: var(--info);
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--secondary);
+        }
+
+        .login-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .attendance-item {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .attendance-present {
+            border-color: var(--success);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .attendance-absent {
+            border-color: var(--danger);
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+
+        .attendance-late {
+            border-color: var(--warning);
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+
+        .calendar-container {
+            margin: 20px 0;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .calendar-day {
+            background-color: white;
+            padding: 10px;
+            min-height: 100px;
+        }
+
+        .calendar-day.header {
+            background-color: #f5f5f5;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .calendar-event {
+            background-color: var(--primary);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .tab {
+                padding: 15px 20px;
+            }
+
+            .attendance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr);
+                font-size: 12px;
+            }
+
+            .calendar-day {
+                padding: 5px;
+                min-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-container">
+        <div class="login-card">
+            <h2 class="login-title">Sistema de Gestión Educativa</h2>
+            <div class="form-group">
+                <label class="form-label">Usuario</label>
+                <input type="text" class="form-control" id="login-username" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="login-password" placeholder="123">
+            </div>
+            <button class="btn btn-primary" id="btn-login" style="width: 100%;">Iniciar Sesión</button>
+            <div style="margin-top: 15px; text-align: center; color: #666; font-size: 14px;">
+                Usuario: admin | Contraseña: 123
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" style="display: none;">
+        <header>
+            <div class="header-content">
+                <div class="logo">Sistema de Gestión Educativa</div>
+                <div class="user-info">
+                    <i class="fas fa-user"></i> 
+                    <span id="current-user">Administrador</span>
+                    <div class="user-actions">
+                        <button class="btn btn-secondary btn-sm" id="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="nav-tabs">
+            <div class="tab active" data-tab="dashboard">Dashboard</div>
+            <div class="tab" data-tab="students">Alumnos</div>
+            <div class="tab" data-tab="teachers">Profesores</div>
+            <div class="tab" data-tab="courses">Cursos</div>
+            <div class="tab" data-tab="schedules">Horarios</div>
+            <div class="tab" data-tab="attendance">Asistencia</div>
+            <div class="tab" data-tab="payments">Pagos</div>
+            <div class="tab" data-tab="grades">Calificaciones</div>
+            <div class="tab" data-tab="events">Eventos</div>
+        </div>
+
+        <div class="container">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="stats-container">
+                    <div class="card">
+                        <div class="card-title">Total de Alumnos</div>
+                        <div class="card-value" id="total-students">0</div>
+                        <div class="card-subtitle">Registrados en el sistema</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Total de Profesores</div>
+                        <div class="card-value" id="total-teachers">0</div>
+                        <div class="card-subtitle">En la institución</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Pagos del Mes</div>
+                        <div class="card-value" id="month-payments">Q0.00</div>
+                        <div class="card-subtitle">Ingresos del mes actual</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Promedio Calificaciones</div>
+                        <div class="card-value" id="avg-grades">0.0</div>
+                        <div class="card-subtitle">Promedio general</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Resumen de Actividad Reciente</div>
+                    <div class="chart-container">
+                        <canvas id="activity-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Tab CON FOTOS -->
+            <div id="students" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Alumnos</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="student-search" placeholder="Buscar por nombre, apellido">
+                                <button class="search-btn" id="student-search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-student">
+                                    <i class="fas fa-user-plus"></i> Nuevo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <div class="list-container" id="students-list">
+                                <!-- Students will be listed here -->
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <div class="card">
+                                <div class="card-title">Detalles del Alumno</div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="student-first-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Apellido</label>
+                                        <input type="text" class="form-control" id="student-last-name">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Fecha de Nacimiento</label>
+                                        <input type="date" class="form-control" id="student-dob">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="student-phone">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="student-email">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Curso/Grado</label>
+                                    <input type="text" class="form-control" id="student-course" placeholder="Ej: 5to Primaria">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Notas</label>
+                                    <textarea class="form-control" id="student-notes" rows="3"></textarea>
+                                </div>
+                                
+                                <!-- SECCIÓN DE FOTOS PARA ESTUDIANTES -->
+                                <div class="photo-container">
+                                    <div class="photo-preview" id="student-photo-preview">
+                                        <span>Sin foto</span>
+                                    </div>
+                                    <div class="photo-actions">
+                                        <button class="btn btn-secondary" id="btn-load-student-photo">
+                                            <i class="fas fa-camera"></i> Cargar Foto
+                                        </button>
+                                        <button class="btn btn-secondary" id="btn-remove-student-photo">
+                                            <i class="fas fa-trash"></i> Quitar Foto
+                                        </button>
+                                        <input type="file" id="student-photo-input" accept="image/*" style="display:none;">
+                                    </div>
+                                </div>
+                                
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" id="btn-save-student">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button class="btn btn-danger" id="btn-delete-student">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teachers Tab CON FOTOS -->
+            <div id="teachers" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Profesores</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="teacher-search" placeholder="Buscar por nombre, apellido">
+                                <button class="search-btn" id="teacher-search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-teacher">
+                                    <i class="fas fa-user-plus"></i> Nuevo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <div class="list-container" id="teachers-list">
+                                <!-- Teachers will be listed here -->
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <div class="card">
+                                <div class="card-title">Detalles del Profesor</div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="teacher-first-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Apellido</label>
+                                        <input type="text" class="form-control" id="teacher-last-name">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Especialidad</label>
+                                    <input type="text" class="form-control" id="teacher-specialty" placeholder="Ej: Matemáticas, Ciencias">
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="teacher-phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="teacher-email">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Notas</label>
+                                    <textarea class="form-control" id="teacher-notes" rows="3"></textarea>
+                                </div>
+                                
+                                <!-- SECCIÓN DE FOTOS PARA PROFESORES -->
+                                <div class="photo-container">
+                                    <div class="photo-preview" id="teacher-photo-preview">
+                                        <span>Sin foto</span>
+                                    </div>
+                                    <div class="photo-actions">
+                                        <button class="btn btn-secondary" id="btn-load-teacher-photo">
+                                            <i class="fas fa-camera"></i> Cargar Foto
+                                        </button>
+                                        <button class="btn btn-secondary" id="btn-remove-teacher-photo">
+                                            <i class="fas fa-trash"></i> Quitar Foto
+                                        </button>
+                                        <input type="file" id="teacher-photo-input" accept="image/*" style="display:none;">
+                                    </div>
+                                </div>
+                                
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" id="btn-save-teacher">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button class="btn btn-danger" id="btn-delete-teacher">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Tab -->
+            <div id="courses" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Cursos</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="course-search" placeholder="Buscar por nombre de curso">
+                                <button class="search-btn" id="course-search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-course">
+                                    <i class="fas fa-plus"></i> Nuevo Curso
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <div class="list-container" id="courses-list">
+                                <!-- Courses will be listed here -->
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <div class="card">
+                                <div class="card-title">Detalles del Curso</div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Nombre del Curso</label>
+                                    <input type="text" class="form-control" id="course-name">
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Código</label>
+                                        <input type="text" class="form-control" id="course-code">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Nivel/Grado</label>
+                                        <input type="text" class="form-control" id="course-level" placeholder="Ej: Primaria, Secundaria">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="course-description" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" id="btn-save-course">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button class="btn btn-danger" id="btn-delete-course">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Tab -->
+            <div id="payments" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Pagos</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label class="form-label">Alumno</label>
+                            <select class="form-control" id="payment-student">
+                                <option value="">Seleccionar alumno</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-payment">
+                                    <i class="fas fa-plus"></i> Nuevo Pago
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="payments-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Alumno</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Método</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-table-body">
+                                <!-- Payments will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grades Tab -->
+            <div id="grades" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Calificaciones</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label class="form-label">Alumno</label>
+                            <select class="form-control" id="grade-student">
+                                <option value="">Seleccionar alumno</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-grade">
+                                    <i class="fas fa-plus"></i> Nueva Calificación
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Alumno</th>
+                                    <th>Asignatura</th>
+                                    <th>Calificación</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="grades-table-body">
+                                <!-- Grades will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedules Tab -->
+            <div id="schedules" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Horarios</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Curso</label>
+                            <select class="form-control" id="schedule-course">
+                                <option value="">Seleccionar curso</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-schedule">
+                                    <i class="fas fa-plus"></i> Nueva Clase
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="schedules-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Curso</th>
+                                    <th>Día</th>
+                                    <th>Hora Inicio</th>
+                                    <th>Hora Fin</th>
+                                    <th>Aula</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedules-table-body">
+                                <!-- Schedules will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Tab -->
+            <div id="attendance" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Asistencia</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Curso</label>
+                            <select class="form-control" id="attendance-course">
+                                <option value="">Seleccionar curso</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="attendance-date">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-mark-attendance">
+                                    <i class="fas fa-check"></i> Marcar Asistencia
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Alumno</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-table-body">
+                                <!-- Attendance will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Tab MEJORADO -->
+            <div id="events" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Gestión de Eventos</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="event-search" placeholder="Buscar por nombre de evento">
+                                <button class="search-btn" id="event-search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btn-new-event">
+                                    <i class="fas fa-plus"></i> Nuevo Evento
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <div class="list-container" id="events-list">
+                                <!-- Events will be listed here -->
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <div class="card">
+                                <div class="card-title">Detalles del Evento</div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Nombre del Evento</label>
+                                    <input type="text" class="form-control" id="event-name">
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Fecha de Inicio</label>
+                                        <input type="datetime-local" class="form-control" id="event-start">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Fecha de Fin</label>
+                                        <input type="datetime-local" class="form-control" id="event-end">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Tipo de Evento</label>
+                                    <select class="form-control" id="event-type">
+                                        <option value="academico">Académico</option>
+                                        <option value="cultural">Cultural</option>
+                                        <option value="deportivo">Deportivo</option>
+                                        <option value="reunion">Reunión</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Ubicación</label>
+                                    <input type="text" class="form-control" id="event-location">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="event-description" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" id="btn-save-event">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button class="btn btn-danger" id="btn-delete-event">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Calendario de Eventos</div>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button class="btn btn-secondary" id="btn-prev-month">
+                                <i class="fas fa-chevron-left"></i> Mes Anterior
+                            </button>
+                            <h3 id="current-month">Mes Actual</h3>
+                            <button class="btn btn-secondary" id="btn-next-month">
+                                Mes Siguiente <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Calendar will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Modal -->
+        <div class="modal" id="payment-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="payment-modal-title">Nuevo Pago</div>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Alumno</label>
+                        <select class="form-control" id="modal-payment-student">
+                            <option value="">Seleccionar alumno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="modal-payment-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="modal-payment-amount" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Método de Pago</label>
+                        <select class="form-control" id="modal-payment-method">
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                            <option value="Transferencia">Transferencia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-control" id="modal-payment-status">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="completado">Completado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="payment-modal-cancel">Cancelar</button>
+                    <button class="btn btn-primary" id="payment-modal-save">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Modal -->
+        <div class="modal" id="grade-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="grade-modal-title">Nueva Calificación</div>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Alumno</label>
+                        <select class="form-control" id="modal-grade-student">
+                            <option value="">Seleccionar alumno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Asignatura</label>
+                        <input type="text" class="form-control" id="modal-grade-subject">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Calificación (0-100)</label>
+                        <input type="number" class="form-control" id="modal-grade-value" step="0.1" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="modal-grade-date">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="grade-modal-cancel">Cancelar</button>
+                    <button class="btn btn-primary" id="grade-modal-save">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Modal -->
+        <div class="modal" id="schedule-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="schedule-modal-title">Nueva Clase</div>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Curso</label>
+                        <select class="form-control" id="modal-schedule-course">
+                            <option value="">Seleccionar curso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Día</label>
+                        <select class="form-control" id="modal-schedule-day">
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Hora Inicio</label>
+                            <input type="time" class="form-control" id="modal-schedule-start">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hora Fin</label>
+                            <input type="time" class="form-control" id="modal-schedule-end">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Aula</label>
+                        <input type="text" class="form-control" id="modal-schedule-room">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="schedule-modal-cancel">Cancelar</button>
+                    <button class="btn btn-primary" id="schedule-modal-save">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Modal MEJORADO -->
+        <div class="modal" id="event-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="event-modal-title">Nuevo Evento</div>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Evento</label>
+                        <input type="text" class="form-control" id="modal-event-name">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Inicio</label>
+                            <input type="datetime-local" class="form-control" id="modal-event-start">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Fin</label>
+                            <input type="datetime-local" class="form-control" id="modal-event-end">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Evento</label>
+                        <select class="form-control" id="modal-event-type">
+                            <option value="academico">Académico</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="deportivo">Deportivo</option>
+                            <option value="reunion">Reunión</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="modal-event-location">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" id="modal-event-description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="event-modal-cancel">Cancelar</button>
+                    <button class="btn btn-primary" id="event-modal-save">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toast-message">Operación completada</span>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo
+        let appData = {
+            students: [
+                { 
+                    id: 1, 
+                    firstName: "Ana", 
+                    lastName: "García", 
+                    dob: "2010-05-15", 
+                    phone: "123-456-7890", 
+                    email: "ana.garcia@email.com", 
+                    course: "5to Primaria", 
+                    notes: "Estudiante destacada",
+                    photo: null 
+                },
+                { 
+                    id: 2, 
+                    firstName: "Luis", 
+                    lastName: "Martínez", 
+                    dob: "2009-08-22", 
+                    phone: "123-456-7891", 
+                    email: "luis.martinez@email.com", 
+                    course: "4to Primaria", 
+                    notes: "Interesado en ciencias",
+                    photo: null 
+                }
+            ],
+            teachers: [
+                { 
+                    id: 1, 
+                    firstName: "Carlos", 
+                    lastName: "Rodríguez", 
+                    specialty: "Matemáticas", 
+                    phone: "123-456-7801", 
+                    email: "carlos@escuela.edu", 
+                    notes: "Profesor con experiencia",
+                    photo: null 
+                },
+                { 
+                    id: 2, 
+                    firstName: "Elena", 
+                    lastName: "Fernández", 
+                    specialty: "Ciencias", 
+                    phone: "123-456-7802", 
+                    email: "elena@escuela.edu", 
+                    notes: "Especialista en biología",
+                    photo: null 
+                }
+            ],
+            courses: [
+                { id: 1, name: "Matemáticas Avanzadas", code: "MAT-501", level: "Secundaria", description: "Curso de matemáticas para estudiantes avanzados" },
+                { id: 2, name: "Ciencias Naturales", code: "CIE-301", level: "Primaria", description: "Introducción a las ciencias naturales" }
+            ],
+            payments: [
+                { id: 1, studentId: 1, date: "2023-10-01", amount: 250.00, method: "Efectivo", status: "completado" },
+                { id: 2, studentId: 2, date: "2023-10-05", amount: 250.00, method: "Transferencia", status: "pendiente" }
+            ],
+            grades: [
+                { id: 1, studentId: 1, subject: "Matemáticas", grade: 95.5, date: "2023-10-15" },
+                { id: 2, studentId: 2, subject: "Ciencias", grade: 88.0, date: "2023-10-18" }
+            ],
+            schedules: [
+                { id: 1, courseId: 1, day: "Lunes", start: "08:00", end: "09:30", room: "Aula 101" },
+                { id: 2, courseId: 2, day: "Martes", start: "10:00", end: "11:30", room: "Laboratorio 1" }
+            ],
+            events: [
+                { 
+                    id: 1, 
+                    name: "Feria de Ciencias", 
+                    start: "2023-11-15T09:00", 
+                    end: "2023-11-15T14:00", 
+                    type: "academico", 
+                    location: "Gimnasio Principal", 
+                    description: "Exposición de proyectos científicos estudiantiles" 
+                },
+                { 
+                    id: 2, 
+                    name: "Reunión de Padres", 
+                    start: "2023-11-20T17:00", 
+                    end: "2023-11-20T19:00", 
+                    type: "reunion", 
+                    location: "Auditorio", 
+                    description: "Reunión para discutir el progreso académico" 
+                }
+            ],
+            attendance: []
+        };
+
+        // Estado de la aplicación
+        let currentState = {
+            selectedStudent: null,
+            selectedTeacher: null,
+            selectedCourse: null,
+            selectedEvent: null,
+            editingPayment: null,
+            editingGrade: null,
+            editingSchedule: null,
+            editingEvent: null,
+            currentMonth: new Date().getMonth(),
+            currentYear: new Date().getFullYear()
+        };
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            setupEventListeners();
+            loadInitialData();
+            initializeCharts();
+            renderCalendar();
+        }
+
+        function setupEventListeners() {
+            // Login
+            document.getElementById('btn-login').addEventListener('click', handleLogin);
+            document.getElementById('btn-logout').addEventListener('click', handleLogout);
+
+            // Navegación de pestañas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // Estudiantes
+            document.getElementById('btn-new-student').addEventListener('click', newStudent);
+            document.getElementById('btn-save-student').addEventListener('click', saveStudent);
+            document.getElementById('btn-delete-student').addEventListener('click', deleteStudent);
+            
+            // Fotos de estudiantes
+            document.getElementById('btn-load-student-photo').addEventListener('click', function() {
+                document.getElementById('student-photo-input').click();
+            });
+            document.getElementById('student-photo-input').addEventListener('change', handleStudentPhotoUpload);
+            document.getElementById('btn-remove-student-photo').addEventListener('click', removeStudentPhoto);
+
+            // Profesores
+            document.getElementById('btn-new-teacher').addEventListener('click', newTeacher);
+            document.getElementById('btn-save-teacher').addEventListener('click', saveTeacher);
+            document.getElementById('btn-delete-teacher').addEventListener('click', deleteTeacher);
+            
+            // Fotos de profesores
+            document.getElementById('btn-load-teacher-photo').addEventListener('click', function() {
+                document.getElementById('teacher-photo-input').click();
+            });
+            document.getElementById('teacher-photo-input').addEventListener('change', handleTeacherPhotoUpload);
+            document.getElementById('btn-remove-teacher-photo').addEventListener('click', removeTeacherPhoto);
+
+            // Cursos
+            document.getElementById('btn-new-course').addEventListener('click', newCourse);
+            document.getElementById('btn-save-course').addEventListener('click', saveCourse);
+            document.getElementById('btn-delete-course').addEventListener('click', deleteCourse);
+
+            // Pagos
+            document.getElementById('btn-new-payment').addEventListener('click', newPayment);
+            document.getElementById('payment-modal-save').addEventListener('click', savePayment);
+            document.getElementById('payment-modal-cancel').addEventListener('click', closePaymentModal);
+
+            // Calificaciones
+            document.getElementById('btn-new-grade').addEventListener('click', newGrade);
+            document.getElementById('grade-modal-save').addEventListener('click', saveGrade);
+            document.getElementById('grade-modal-cancel').addEventListener('click', closeGradeModal);
+
+            // Horarios
+            document.getElementById('btn-new-schedule').addEventListener('click', newSchedule);
+            document.getElementById('schedule-modal-save').addEventListener('click', saveSchedule);
+            document.getElementById('schedule-modal-cancel').addEventListener('click', closeScheduleModal);
+
+            // Eventos
+            document.getElementById('btn-new-event').addEventListener('click', newEvent);
+            document.getElementById('btn-save-event').addEventListener('click', saveEvent);
+            document.getElementById('btn-delete-event').addEventListener('click', deleteEvent);
+            document.getElementById('event-modal-save').addEventListener('click', saveEventModal);
+            document.getElementById('event-modal-cancel').addEventListener('click', closeEventModal);
+
+            // Asistencia
+            document.getElementById('btn-mark-attendance').addEventListener('click', markAttendance);
+
+            // Calendario
+            document.getElementById('btn-prev-month').addEventListener('click', prevMonth);
+            document.getElementById('btn-next-month').addEventListener('click', nextMonth);
+
+            // Cerrar modales
+            document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+        }
+
+        function loadInitialData() {
+            renderStudentsList();
+            renderTeachersList();
+            renderCoursesList();
+            renderPaymentsTable();
+            renderGradesTable();
+            renderSchedulesTable();
+            renderEventsList();
+            updateDashboardStats();
+            populateDropdowns();
+            
+            // Establecer fecha actual para asistencia
+            document.getElementById('attendance-date').valueAsDate = new Date();
+        }
+
+        function switchTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (username === 'admin' && password === '123') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('current-user').textContent = username;
+                showToast('Sesión iniciada correctamente');
+            } else {
+                showToast('Usuario o contraseña incorrectos', 'error');
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        }
+
+        // ========== ESTUDIANTES CON FOTOS ==========
+        function renderStudentsList() {
+            const list = document.getElementById('students-list');
+            list.innerHTML = '';
+
+            appData.students.forEach(student => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                if (currentState.selectedStudent && currentState.selectedStudent.id === student.id) {
+                    item.classList.add('selected');
+                }
+                item.innerHTML = `${student.firstName} ${student.lastName} - ${student.course}`;
+                item.addEventListener('click', () => selectStudent(student));
+                list.appendChild(item);
+            });
+        }
+
+        function selectStudent(student) {
+            currentState.selectedStudent = student;
+            renderStudentsList();
+            
+            document.getElementById('student-first-name').value = student.firstName;
+            document.getElementById('student-last-name').value = student.lastName;
+            document.getElementById('student-dob').value = student.dob;
+            document.getElementById('student-phone').value = student.phone;
+            document.getElementById('student-email').value = student.email;
+            document.getElementById('student-course').value = student.course;
+            document.getElementById('student-notes').value = student.notes;
+            
+            // Mostrar foto del estudiante
+            const photoPreview = document.getElementById('student-photo-preview');
+            if (student.photo) {
+                photoPreview.innerHTML = `<img src="${student.photo}" alt="Foto de ${student.firstName}">`;
+            } else {
+                photoPreview.innerHTML = '<span>Sin foto</span>';
+            }
+        }
+
+        function newStudent() {
+            currentState.selectedStudent = null;
+            document.getElementById('student-first-name').value = '';
+            document.getElementById('student-last-name').value = '';
+            document.getElementById('student-dob').value = '';
+            document.getElementById('student-phone').value = '';
+            document.getElementById('student-email').value = '';
+            document.getElementById('student-course').value = '';
+            document.getElementById('student-notes').value = '';
+            document.getElementById('student-photo-preview').innerHTML = '<span>Sin foto</span>';
+            renderStudentsList();
+        }
+
+        function saveStudent() {
+            const firstName = document.getElementById('student-first-name').value;
+            const lastName = document.getElementById('student-last-name').value;
+
+            if (!firstName || !lastName) {
+                showToast('Nombre y apellido son obligatorios', 'error');
+                return;
+            }
+
+            if (currentState.selectedStudent) {
+                // Actualizar estudiante existente
+                const student = appData.students.find(s => s.id === currentState.selectedStudent.id);
+                student.firstName = firstName;
+                student.lastName = lastName;
+                student.dob = document.getElementById('student-dob').value;
+                student.phone = document.getElementById('student-phone').value;
+                student.email = document.getElementById('student-email').value;
+                student.course = document.getElementById('student-course').value;
+                student.notes = document.getElementById('student-notes').value;
+                showToast('Estudiante actualizado correctamente');
+            } else {
+                // Crear nuevo estudiante
+                const newId = appData.students.length > 0 ? Math.max(...appData.students.map(s => s.id)) + 1 : 1;
+                const newStudent = {
+                    id: newId,
+                    firstName: firstName,
+                    lastName: lastName,
+                    dob: document.getElementById('student-dob').value,
+                    phone: document.getElementById('student-phone').value,
+                    email: document.getElementById('student-email').value,
+                    course: document.getElementById('student-course').value,
+                    notes: document.getElementById('student-notes').value,
+                    photo: null
+                };
+                appData.students.push(newStudent);
+                currentState.selectedStudent = newStudent;
+                showToast('Estudiante creado correctamente');
+            }
+
+            renderStudentsList();
+            populateDropdowns();
+            updateDashboardStats();
+        }
+
+        function deleteStudent() {
+            if (!currentState.selectedStudent) {
+                showToast('Seleccione un estudiante primero', 'error');
+                return;
+            }
+
+            if (confirm('¿Está seguro de eliminar este estudiante?')) {
+                appData.students = appData.students.filter(s => s.id !== currentState.selectedStudent.id);
+                newStudent();
+                renderStudentsList();
+                populateDropdowns();
+                updateDashboardStats();
+                showToast('Estudiante eliminado correctamente');
+            }
+        }
+
+        function handleStudentPhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.match('image.*')) {
+                showToast('Por favor seleccione un archivo de imagen válido', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const photoData = e.target.result;
+                document.getElementById('student-photo-preview').innerHTML = `<img src="${photoData}" alt="Foto del estudiante">`;
+                
+                if (currentState.selectedStudent) {
+                    currentState.selectedStudent.photo = photoData;
+                    showToast('Foto cargada correctamente');
+                } else {
+                    showToast('Guarde el estudiante primero para asociar la foto', 'warning');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeStudentPhoto() {
+            if (!currentState.selectedStudent) {
+                showToast('Seleccione un estudiante primero', 'warning');
+                return;
+            }
+
+            currentState.selectedStudent.photo = null;
+            document.getElementById('student-photo-preview').innerHTML = '<span>Sin foto</span>';
+            showToast('Foto eliminada correctamente');
+        }
+
+        // ========== PROFESORES CON FOTOS ==========
+        function renderTeachersList() {
+            const list = document.getElementById('teachers-list');
+            list.innerHTML = '';
+
+            appData.teachers.forEach(teacher => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                if (currentState.selectedTeacher && currentState.selectedTeacher.id === teacher.id) {
+                    item.classList.add('selected');
+                }
+                item.innerHTML = `${teacher.firstName} ${teacher.lastName} - ${teacher.specialty}`;
+                item.addEventListener('click', () => selectTeacher(teacher));
+                list.appendChild(item);
+            });
+        }
+
+        function selectTeacher(teacher) {
+            currentState.selectedTeacher = teacher;
+            renderTeachersList();
+            
+            document.getElementById('teacher-first-name').value = teacher.firstName;
+            document.getElementById('teacher-last-name').value = teacher.lastName;
+            document.getElementById('teacher-specialty').value = teacher.specialty;
+            document.getElementById('teacher-phone').value = teacher.phone;
+            document.getElementById('teacher-email').value = teacher.email;
+            document.getElementById('teacher-notes').value = teacher.notes;
+            
+            // Mostrar foto del profesor
+            const photoPreview = document.getElementById('teacher-photo-preview');
+            if (teacher.photo) {
+                photoPreview.innerHTML = `<img src="${teacher.photo}" alt="Foto de ${teacher.firstName}">`;
+            } else {
+                photoPreview.innerHTML = '<span>Sin foto</span>';
+            }
+        }
+
+        function newTeacher() {
+            currentState.selectedTeacher = null;
+            document.getElementById('teacher-first-name').value = '';
+            document.getElementById('teacher-last-name').value = '';
+            document.getElementById('teacher-specialty').value = '';
+            document.getElementById('teacher-phone').value = '';
+            document.getElementById('teacher-email').value = '';
+            document.getElementById('teacher-notes').value = '';
+            document.getElementById('teacher-photo-preview').innerHTML = '<span>Sin foto</span>';
+            renderTeachersList();
+        }
+
+        function saveTeacher() {
+            const firstName = document.getElementById('teacher-first-name').value;
+            const lastName = document.getElementById('teacher-last-name').value;
+            const specialty = document.getElementById('teacher-specialty').value;
+
+            if (!firstName || !lastName || !specialty) {
+                showToast('Nombre, apellido y especialidad son obligatorios', 'error');
+                return;
+            }
+
+            if (currentState.selectedTeacher) {
+                // Actualizar profesor existente
+                const teacher = appData.teachers.find(t => t.id === currentState.selectedTeacher.id);
+                teacher.firstName = firstName;
+                teacher.lastName = lastName;
+                teacher.specialty = specialty;
+                teacher.phone = document.getElementById('teacher-phone').value;
+                teacher.email = document.getElementById('teacher-email').value;
+                teacher.notes = document.getElementById('teacher-notes').value;
+                showToast('Profesor actualizado correctamente');
+            } else {
+                // Crear nuevo profesor
+                const newId = appData.teachers.length > 0 ? Math.max(...appData.teachers.map(t => t.id)) + 1 : 1;
+                const newTeacher = {
+                    id: newId,
+                    firstName: firstName,
+                    lastName: lastName,
+                    specialty: specialty,
+                    phone: document.getElementById('teacher-phone').value,
+                    email: document.getElementById('teacher-email').value,
+                    notes: document.getElementById('teacher-notes').value,
+                    photo: null
+                };
+                appData.teachers.push(newTeacher);
+                currentState.selectedTeacher = newTeacher;
+                showToast('Profesor creado correctamente');
+            }
+
+            renderTeachersList();
+            updateDashboardStats();
+        }
+
+        function deleteTeacher() {
+            if (!currentState.selectedTeacher) {
+                showToast('Seleccione un profesor primero', 'error');
+                return;
+            }
+
+            if (confirm('¿Está seguro de eliminar este profesor?')) {
+                appData.teachers = appData.teachers.filter(t => t.id !== currentState.selectedTeacher.id);
+                newTeacher();
+                renderTeachersList();
+                updateDashboardStats();
+                showToast('Profesor eliminado correctamente');
+            }
+        }
+
+        function handleTeacherPhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.match('image.*')) {
+                showToast('Por favor seleccione un archivo de imagen válido', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const photoData = e.target.result;
+                document.getElementById('teacher-photo-preview').innerHTML = `<img src="${photoData}" alt="Foto del profesor">`;
+                
+                if (currentState.selectedTeacher) {
+                    currentState.selectedTeacher.photo = photoData;
+                    showToast('Foto cargada correctamente');
+                } else {
+                    showToast('Guarde el profesor primero para asociar la foto', 'warning');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeTeacherPhoto() {
+            if (!currentState.selectedTeacher) {
+                showToast('Seleccione un profesor primero', 'warning');
+                return;
+            }
+
+            currentState.selectedTeacher.photo = null;
+            document.getElementById('teacher-photo-preview').innerHTML = '<span>Sin foto</span>';
+            showToast('Foto eliminada correctamente');
+        }
+
+        // ========== EVENTOS MEJORADOS ==========
+        function renderEventsList() {
+            const list = document.getElementById('events-list');
+            list.innerHTML = '';
+
+            appData.events.forEach(event => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                if (currentState.selectedEvent && currentState.selectedEvent.id === event.id) {
+                    item.classList.add('selected');
+                }
+                
+                const startDate = new Date(event.start);
+                const formattedDate = startDate.toLocaleDateString('es-ES', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                
+                item.innerHTML = `
+                    <div><strong>${event.name}</strong></div>
+                    <div class="text-muted">${formattedDate}</div>
+                    <div class="text-muted">${event.location}</div>
+                `;
+                item.addEventListener('click', () => selectEvent(event));
+                list.appendChild(item);
+            });
+        }
+
+        function selectEvent(event) {
+            currentState.selectedEvent = event;
+            renderEventsList();
+            
+            document.getElementById('event-name').value = event.name;
+            document.getElementById('event-start').value = event.start.replace(' ', 'T').substring(0, 16);
+            document.getElementById('event-end').value = event.end.replace(' ', 'T').substring(0, 16);
+            document.getElementById('event-type').value = event.type;
+            document.getElementById('event-location').value = event.location;
+            document.getElementById('event-description').value = event.description;
+        }
+
+        function newEvent() {
+            currentState.selectedEvent = null;
+            document.getElementById('event-name').value = '';
+            
+            // Set default start and end times (next Monday at 9 AM, 2 hours duration)
+            const nextMonday = new Date();
+            nextMonday.setDate(nextMonday.getDate() + (1 + 7 - nextMonday.getDay()) % 7);
+            nextMonday.setHours(9, 0, 0, 0);
+            
+            const endTime = new Date(nextMonday);
+            endTime.setHours(11, 0, 0, 0);
+            
+            document.getElementById('event-start').value = nextMonday.toISOString().slice(0, 16);
+            document.getElementById('event-end').value = endTime.toISOString().slice(0, 16);
+            
+            document.getElementById('event-type').value = 'academico';
+            document.getElementById('event-location').value = '';
+            document.getElementById('event-description').value = '';
+            
+            renderEventsList();
+        }
+
+        function saveEvent() {
+            const name = document.getElementById('event-name').value;
+            const start = document.getElementById('event-start').value;
+            const end = document.getElementById('event-end').value;
+            const type = document.getElementById('event-type').value;
+            const location = document.getElementById('event-location').value;
+            const description = document.getElementById('event-description').value;
+
+            if (!name || !start || !end || !type || !location) {
+                showToast('Por favor complete todos los campos obligatorios', 'error');
+                return;
+            }
+
+            if (currentState.selectedEvent) {
+                // Actualizar evento existente
+                const event = appData.events.find(e => e.id === currentState.selectedEvent.id);
+                event.name = name;
+                event.start = start.replace('T', ' ');
+                event.end = end.replace('T', ' ');
+                event.type = type;
+                event.location = location;
+                event.description = description;
+                showToast('Evento actualizado correctamente');
+            } else {
+                // Crear nuevo evento
+                const newId = appData.events.length > 0 ? Math.max(...appData.events.map(e => e.id)) + 1 : 1;
+                const newEvent = {
+                    id: newId,
+                    name: name,
+                    start: start.replace('T', ' '),
+                    end: end.replace('T', ' '),
+                    type: type,
+                    location: location,
+                    description: description
+                };
+                appData.events.push(newEvent);
+                currentState.selectedEvent = newEvent;
+                showToast('Evento creado correctamente');
+            }
+
+            renderEventsList();
+            renderCalendar();
+        }
+
+        function deleteEvent() {
+            if (!currentState.selectedEvent) {
+                showToast('Seleccione un evento primero', 'error');
+                return;
+            }
+
+            if (confirm('¿Está seguro de eliminar este evento?')) {
+                appData.events = appData.events.filter(e => e.id !== currentState.selectedEvent.id);
+                newEvent();
+                renderEventsList();
+                renderCalendar();
+                showToast('Evento eliminado correctamente');
+            }
+        }
+
+        function saveEventModal() {
+            const name = document.getElementById('modal-event-name').value;
+            const start = document.getElementById('modal-event-start').value;
+            const end = document.getElementById('modal-event-end').value;
+            const type = document.getElementById('modal-event-type').value;
+            const location = document.getElementById('modal-event-location').value;
+            const description = document.getElementById('modal-event-description').value;
+
+            if (!name || !start || !end || !location) {
+                showToast('Complete todos los campos obligatorios', 'error');
+                return;
+            }
+
+            if (currentState.editingEvent) {
+                // Actualizar evento existente
+                const event = appData.events.find(e => e.id === currentState.editingEvent.id);
+                event.name = name;
+                event.start = start.replace('T', ' ');
+                event.end = end.replace('T', ' ');
+                event.type = type;
+                event.location = location;
+                event.description = description;
+                showToast('Evento actualizado correctamente');
+            } else {
+                // Crear nuevo evento
+                const newId = appData.events.length > 0 ? Math.max(...appData.events.map(e => e.id)) + 1 : 1;
+                const newEvent = {
+                    id: newId,
+                    name: name,
+                    start: start.replace('T', ' '),
+                    end: end.replace('T', ' '),
+                    type: type,
+                    location: location,
+                    description: description
+                };
+                appData.events.push(newEvent);
+                showToast('Evento creado correctamente');
+            }
+
+            closeEventModal();
+            renderEventsList();
+            renderCalendar();
+        }
+
+        // ========== CALENDARIO ==========
+        function renderCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const currentMonthElement = document.getElementById('current-month');
+            
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+            
+            // Set current month title
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            currentMonthElement.textContent = `${monthNames[currentState.currentMonth]} ${currentState.currentYear}`;
+            
+            // Create header for days of the week
+            const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            daysOfWeek.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day header';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentState.currentYear, currentState.currentMonth, 1);
+            const lastDay = new Date(currentState.currentYear, currentState.currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add cells for each day of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.innerHTML = `<div>${day}</div>`;
+                
+                // Check if there are events on this day
+                const currentDate = new Date(currentState.currentYear, currentState.currentMonth, day);
+                const eventsOnDay = appData.events.filter(event => {
+                    const eventDate = new Date(event.start);
+                    return eventDate.getDate() === currentDate.getDate() && 
+                           eventDate.getMonth() === currentDate.getMonth() && 
+                           eventDate.getFullYear() === currentDate.getFullYear();
+                });
+                
+                // Add events to the day
+                eventsOnDay.forEach(event => {
+                    const eventElement = document.createElement('div');
+                    eventElement.className = 'calendar-event';
+                    eventElement.textContent = event.name;
+                    eventElement.addEventListener('click', () => {
+                        selectEvent(event);
+                    });
+                    dayElement.appendChild(eventElement);
+                });
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function prevMonth() {
+            if (currentState.currentMonth === 0) {
+                currentState.currentMonth = 11;
+                currentState.currentYear--;
+            } else {
+                currentState.currentMonth--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            if (currentState.currentMonth === 11) {
+                currentState.currentMonth = 0;
+                currentState.currentYear++;
+            } else {
+                currentState.currentMonth++;
+            }
+            renderCalendar();
+        }
+
+        // ========== FUNCIONES RESTANTES (se mantienen igual) ==========
+        // [Las funciones de cursos, pagos, calificaciones, horarios y asistencia se mantienen igual que en la versión anterior]
+        // Solo se muestran las funciones modificadas para fotos y eventos
+
+        function populateDropdowns() {
+            // Estudiantes para pagos y calificaciones
+            const paymentStudentSelect = document.getElementById('modal-payment-student');
+            const gradeStudentSelect = document.getElementById('modal-grade-student');
+            const mainPaymentStudentSelect = document.getElementById('payment-student');
+            const mainGradeStudentSelect = document.getElementById('grade-student');
+
+            [paymentStudentSelect, gradeStudentSelect, mainPaymentStudentSelect, mainGradeStudentSelect].forEach(select => {
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccionar alumno</option>';
+                    appData.students.forEach(student => {
+                        const option = document.createElement('option');
+                        option.value = student.id;
+                        option.textContent = `${student.firstName} ${student.lastName}`;
+                        select.appendChild(option);
+                    });
+                }
+            });
+
+            // Cursos para horarios y asistencia
+            const scheduleCourseSelect = document.getElementById('modal-schedule-course');
+            const mainScheduleCourseSelect = document.getElementById('schedule-course');
+            const attendanceCourseSelect = document.getElementById('attendance-course');
+
+            [scheduleCourseSelect, mainScheduleCourseSelect, attendanceCourseSelect].forEach(select => {
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccionar curso</option>';
+                    appData.courses.forEach(course => {
+                        const option = document.createElement('option');
+                        option.value = course.id;
+                        option.textContent = course.name;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('total-students').textContent = appData.students.length;
+            document.getElementById('total-teachers').textContent = appData.teachers.length;
+
+            // Calcular pagos del mes
+            const currentMonth = new Date().getMonth();
+            const monthlyPayments = appData.payments.filter(p => {
+                const paymentDate = new Date(p.date);
+                return paymentDate.getMonth() === currentMonth && p.status === 'completado';
+            });
+            const monthlyTotal = monthlyPayments.reduce((sum, p) => sum + p.amount, 0);
+            document.getElementById('month-payments').textContent = `Q${monthlyTotal.toFixed(2)}`;
+
+            // Calcular promedio de calificaciones
+            if (appData.grades.length > 0) {
+                const avgGrade = appData.grades.reduce((sum, g) => sum + g.grade, 0) / appData.grades.length;
+                document.getElementById('avg-grades').textContent = avgGrade.toFixed(1);
+            }
+        }
+
+        function initializeCharts() {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Pagos Mensuales',
+                        data: [1200, 1900, 1500, 2000, 1800, 2200],
+                        backgroundColor: '#1976d2'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast';
+            
+            if (type === 'error') {
+                toast.classList.add('error');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Funciones para otros módulos (se mantienen igual)
+        function renderCoursesList() {
+            const list = document.getElementById('courses-list');
+            list.innerHTML = '';
+
+            appData.courses.forEach(course => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                if (currentState.selectedCourse && currentState.selectedCourse.id === course.id) {
+                    item.classList.add('selected');
+                }
+                item.innerHTML = `${course.name} - ${course.code}`;
+                item.addEventListener('click', () => selectCourse(course));
+                list.appendChild(item);
+            });
+        }
+
+        function selectCourse(course) {
+            currentState.selectedCourse = course;
+            renderCoursesList();
+            
+            document.getElementById('course-name').value = course.name;
+            document.getElementById('course-code').value = course.code;
+            document.getElementById('course-level').value = course.level;
+            document.getElementById('course-description').value = course.description;
+        }
+
+        function newCourse() {
+            currentState.selectedCourse = null;
+            document.getElementById('course-name').value = '';
+            document.getElementById('course-code').value = '';
+            document.getElementById('course-level').value = '';
+            document.getElementById('course-description').value = '';
+            renderCoursesList();
+        }
+
+        function saveCourse() {
+            const name = document.getElementById('course-name').value;
+            const code = document.getElementById('course-code').value;
+
+            if (!name || !code) {
+                showToast('Nombre y código son obligatorios', 'error');
+                return;
+            }
+
+            if (currentState.selectedCourse) {
+                // Actualizar curso existente
+                const course = appData.courses.find(c => c.id === currentState.selectedCourse.id);
+                course.name = name;
+                course.code = code;
+                course.level = document.getElementById('course-level').value;
+                course.description = document.getElementById('course-description').value;
+                showToast('Curso actualizado correctamente');
+            } else {
+                // Crear nuevo curso
+                const newId = appData.courses.length > 0 ? Math.max(...appData.courses.map(c => c.id)) + 1 : 1;
+                const newCourse = {
+                    id: newId,
+                    name: name,
+                    code: code,
+                    level: document.getElementById('course-level').value,
+                    description: document.getElementById('course-description').value
+                };
+                appData.courses.push(newCourse);
+                currentState.selectedCourse = newCourse;
+                showToast('Curso creado correctamente');
+            }
+
+            renderCoursesList();
+            populateDropdowns();
+        }
+
+        function deleteCourse() {
+            if (!currentState.selectedCourse) {
+                showToast('Seleccione un curso primero', 'error');
+                return;
+            }
+
+            if (confirm('¿Está seguro de eliminar este curso?')) {
+                appData.courses = appData.courses.filter(c => c.id !== currentState.selectedCourse.id);
+                newCourse();
+                renderCoursesList();
+                populateDropdowns();
+                showToast('Curso eliminado correctamente');
+            }
+        }
+
+        // [Las demás funciones de pagos, calificaciones, horarios y asistencia se mantienen igual]
+    </script>
+</body>
+</html>
